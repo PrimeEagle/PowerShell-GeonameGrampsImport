@@ -24,3 +24,7 @@ GeonamesImport.sql
 
 
 ## Step 4: Convert to Gramps JSON
+
+
+## Step $: Import into Gramps
+Before proceeding, you will need the "JSON Import" addon installed in Gramps.
