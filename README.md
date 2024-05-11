@@ -40,4 +40,5 @@ outputJsonFile - the output JSON file, which consists of the csvFile merged with
 
 ## Step 5: Import into Gramps
 Before proceeding, you will need the "JSON Import" addon installed in Gramps.
+
 Open Gramps, go to the Family Trees menu, then click on "Import..."
