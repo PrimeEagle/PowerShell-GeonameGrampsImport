@@ -169,7 +169,7 @@ INSERT INTO regionType ([name], [type]) VALUES
 ('Commune', 'Commune'),
 ('Communes', 'Commune'),
 ('Counties', 'County'),
-('County', 'County'),
+--('County', 'County'),
 ('County-level Cities', 'County-level City'),
 ('County-level City', 'County-level City'),
 ('District', 'District'),

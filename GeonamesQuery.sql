@@ -6,7 +6,7 @@ declare @adminLevels varchar(50)
 set @countryCode = '$(CountryCode)'
 set @adminLevels = '$(AdminLevel)'
 
---set @countryCode = 'cn'
+--set @countryCode = 'us'
 --set @adminLevels = '1'
 
 drop table if exists #geoname_include
