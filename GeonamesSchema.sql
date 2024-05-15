@@ -135,6 +135,13 @@ create table regionType
 	[type] nvarchar(100)
 )
 
+drop table if exists mapGeonameidName
+create table mapGeonameidName
+(
+	[geonameid] int primary key,
+	[name] nvarchar(200)
+)
+
 CREATE INDEX index9 ON dbo.regionType (name)
 
 drop table if exists iso_language_code
@@ -208,6 +215,9 @@ AS
 BEGIN
 	DECLARE @RegionName NVARCHAR(200);
 
+	select @RegionName = [name] from mapGeonameidName where geonameid = @geonameid
+	if(@RegionName is not null) return @RegionName
+
     SELECT @RegionName = name FROM geoname WHERE geonameid = @geonameid;
 
     SELECT @RegionName = dbo.ReplaceWholeWord(@RegionName, name + ' of', '') 
@@ -252,6 +262,7 @@ BEGIN
         WHEN 1 THEN 'ADM1'  -- First administrative division
         WHEN 2 THEN 'ADM2'  -- Second administrative division
         WHEN 3 THEN 'ADM3'  -- Third administrative division
+		WHEN 4 THEN 'ADM4'  -- Third administrative division
         ELSE NULL
     END;
 

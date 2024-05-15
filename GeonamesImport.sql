@@ -269,6 +269,16 @@ INSERT INTO regionType ([name], [type]) VALUES
 go
 
 
+truncate table mapGeonameidName
+insert mapGeonameidName select 1803360, 'Linqu'
+insert mapGeonameidName select 1797437, 'Qi'
+insert mapGeonameidName select 1797435, 'Qi'
+insert mapGeonameidName select 1797436, 'Qi'
+insert mapGeonameidName select 1790360, 'Xian'
+insert mapGeonameidName select 12746453, 'Xian''an'
+go
+
+
 
 ALTER TABLE geoname ADD regionType NVARCHAR(100);
 go

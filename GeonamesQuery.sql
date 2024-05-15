@@ -6,7 +6,7 @@ declare @adminLevels varchar(50)
 set @countryCode = '$(CountryCode)'
 set @adminLevels = '$(AdminLevel)'
 
---set @countryCode = 'us'
+--set @countryCode = 'cn'
 --set @adminLevels = '1'
 
 drop table if exists #geoname_include
@@ -51,9 +51,12 @@ declare @language varchar(250)
 
 select @language = ltrim(rtrim(replace(replace(language_name, char(10), ''), char(13), ''))) from iso_language_code where ISO639_1 = @languageCode
 
+
 SELECT 
+	--g.geonameid, g.name, an.alternate_name, an.isPreferredName, an.isolanguage 
     dbo.CleanRegionName(g.geonameid) as [Region],
-    MAX(CASE WHEN @languageCode = 'en' then null when an.isolanguage = @languageCode THEN dbo.CleanAlternateRegionName(an.alternateNameId) END) AS [Region_Native],
+    --MAX(CASE WHEN @languageCode = 'en' then null when an.isolanguage = @languageCode THEN dbo.CleanAlternateRegionName(an.alternateNameId) END) AS [Region_Native],
+	(select top 1 case when @languageCode = 'en' then null else dbo.CleanAlternateRegionName(alternateNameId) end from alternate_name where isolanguage = @languageCode and geonameid = g.geonameid order by isPreferredName desc) as [Region_Native],
 	@language as [Language],
     g.regionType AS [Type], 
     g.latitude AS [Latitude],
@@ -62,14 +65,19 @@ SELECT
 	case when gi.admin_level in (2, 3, 4) then dbo.GetEnclosedBy(g.geonameid, 1) else null end as [Enclosed_By_Level1],
 	case when gi.admin_level in (3, 4) then dbo.GetEnclosedBy(g.geonameid, 2) else null end as [Enclosed_By_Level2],
 	case when gi.admin_level in (4) then dbo.GetEnclosedBy(g.geonameid, 3) else null end as [Enclosed_By_Level3],
-    MAX(CASE WHEN an.geonameid = g.geonameid AND an.isolanguage = 'link' AND an.alternate_name LIKE 'https://en.wikipedia%' THEN an.alternate_name END) AS [Wikipedia_URL]
+	(select top 1 alternate_name from alternate_name where isolanguage = 'link' and geonameid = g.geonameid and alternate_name like 'https://en.wikipedia%') as [Wikipedia_URL]
+    --MAX(CASE WHEN an.geonameid = g.geonameid AND an.isolanguage = 'link' AND an.alternate_name LIKE 'https://en.wikipedia%' THEN an.alternate_name END) AS [Wikipedia_URL]
 FROM 
     geoname g
 INNER JOIN 
     #geoname_include gi ON g.geonameid = gi.geonameid
-LEFT JOIN 
-    alternate_name an ON an.geonameid = g.geonameid AND (an.isolanguage = 'en' OR an.isolanguage = @languageCode OR (an.isolanguage = 'link' AND an.alternate_name LIKE 'https://en.wikipedia%'))
-GROUP BY 
-    g.geonameid, g.regionType, g.latitude, g.longitude, g.feature_code, g.name, gi.admin_level
+--LEFT JOIN 
+--    alternate_name an ON an.geonameid = g.geonameid
+--WHERE
+	--1=1
+	--an.isPreferredName = 1
+	--and (an.isolanguage = 'en' OR an.isolanguage = @languageCode OR (an.isolanguage = 'link' AND an.alternate_name LIKE 'https://en.wikipedia%'))
+--GROUP BY 
+--    g.geonameid, g.regionType, g.latitude, g.longitude, g.feature_code, g.name, gi.admin_level
 ORDER BY 
     g.feature_code, g.name;
